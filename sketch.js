@@ -1,12 +1,13 @@
 let facemesh;
 let video;
 let predictions = [];
-// 原本的 points
 const points = [409,270,269,267,0,37,39,40,185,61,146,91,181,84,17,314,405,321,375,291
 ,76,77,90,180,85,16,315,404,320,307,306,408,304,303,302,11,72,73,74,184];
-// 眼睛的點
-const eyePoints = [243,190,56,28,27,29,30,247,130,25,110,24,23,22,26,112,
-133,173,157,158,159,160,161,246,33,7,163,144,145,153,154,155];
+// 右眼的點
+const rightEyePoints = [
+  359,467,260,259,257,258,286,414,463,341,256,252,253,254,339,255,
+  263,466,388,387,386,385,384,398,362,382,381,380,374,373,390,249
+];
 
 function setup() {
   createCanvas(400, 400);
@@ -33,7 +34,7 @@ function draw() {
   if (predictions.length > 0) {
     const keypoints = predictions[0].scaledMesh;
 
-    // --- 原本嘴巴圖形 ---
+    // --- 嘴巴圖形 ---
     const [mouthX, mouthY] = keypoints[13];
     let sumX = 0, sumY = 0;
     for (let i = 0; i < points.length; i++) {
@@ -45,7 +46,7 @@ function draw() {
     const centerX = sumX / points.length;
     const centerY = sumY / points.length;
     const offsetX = mouthX - centerX;
-    const offsetY = mouthY - centerY - 20; // 再往上移一點
+    const offsetY = mouthY - centerY;
 
     stroke(255, 0, 0);
     strokeWeight(5);
@@ -59,29 +60,27 @@ function draw() {
     }
     endShape();
 
-    // --- 綠色眼睛圖形 ---
-    // 以468號點（左眼中心）為基準，或你可選用133、362等眼睛中心點
-    const [eyeCenterX, eyeCenterY] = keypoints[468] || keypoints[133]; // 防呆
-    // 計算圖形中心
+    // --- 綠色右眼圖形 ---
+    // 以右眼中心362號點為基準
+    const [eyeX, eyeY] = keypoints[362];
     let eyeSumX = 0, eyeSumY = 0;
-    for (let i = 0; i < eyePoints.length; i++) {
-      const idx = eyePoints[i];
+    for (let i = 0; i < rightEyePoints.length; i++) {
+      const idx = rightEyePoints[i];
       if (!keypoints[idx]) continue;
       eyeSumX += keypoints[idx][0];
       eyeSumY += keypoints[idx][1];
     }
-    const eyeShapeCenterX = eyeSumX / eyePoints.length;
-    const eyeShapeCenterY = eyeSumY / eyePoints.length;
-    // 平移量
-    const eyeOffsetX = eyeCenterX - eyeShapeCenterX;
-    const eyeOffsetY = eyeCenterY - eyeShapeCenterY;
+    const eyeCenterX = eyeSumX / rightEyePoints.length;
+    const eyeCenterY = eyeSumY / rightEyePoints.length;
+    const eyeOffsetX = eyeX - eyeCenterX;
+    const eyeOffsetY = eyeY - eyeCenterY;
 
     stroke(0, 255, 0);
     strokeWeight(5);
     noFill();
     beginShape();
-    for (let i = 0; i < eyePoints.length; i++) {
-      const idx = eyePoints[i];
+    for (let i = 0; i < rightEyePoints.length; i++) {
+      const idx = rightEyePoints[i];
       if (!keypoints[idx]) continue;
       const [x, y] = keypoints[idx];
       vertex(x + eyeOffsetX, y + eyeOffsetY);
