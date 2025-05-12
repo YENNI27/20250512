@@ -44,8 +44,8 @@ function draw() {
     const centerY = sumY / points.length;
 
     // 計算平移量
-    const offsetX = mouthX - centerX;
-    const offsetY = mouthY - centerY;
+   const offsetX = mouthX - centerX;
+    const offsetY = mouthY - centerY - 20; // 這裡的 20 可自行調整
 
     stroke(255, 0, 0);
     strokeWeight(5);
