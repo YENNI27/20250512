@@ -60,20 +60,54 @@ function draw() {
     }
     endShape();
 
-    // --- 綠色右眼圖形 ---
+    const leftEyePoints = [
+  243,190,56,28,27,29,30,247,130,25,110,24,23,22,26,112,
+  133,173,157,158,159,160,161,246,33,7,163,144,145,153,154,155
+];
+const rightEyePoints = [
+  359,467,260,259,257,258,286,414,463,341,256,252,253,254,339,255,
+  263,466,388,387,386,385,384,398,362,382,381,380,374,373,390,249
+];
+    // --- 左眼圖形 ---
+    // 以左眼中心133號點為基準
+    const [leftEyeX, leftEyeY] = keypoints[133];
+    let leftSumX = 0, leftSumY = 0;
+    for (let i = 0; i < leftEyePoints.length; i++) {
+      const idx = leftEyePoints[i];
+      if (!keypoints[idx]) continue;
+      leftSumX += keypoints[idx][0];
+      leftSumY += keypoints[idx][1];
+    }
+    const leftCenterX = leftSumX / leftEyePoints.length;
+    const leftCenterY = leftSumY / leftEyePoints.length;
+    const leftOffsetX = leftEyeX - leftCenterX;
+    const leftOffsetY = leftEyeY - leftCenterY;
+
+    stroke(0, 255, 0);
+    strokeWeight(5);
+    noFill();
+    beginShape();
+    for (let i = 0; i < leftEyePoints.length; i++) {
+      const idx = leftEyePoints[i];
+      if (!keypoints[idx]) continue;
+      const [x, y] = keypoints[idx];
+      vertex(x + leftOffsetX, y + leftOffsetY);
+    }
+    endShape();
+    // --- 右眼圖形 ---
     // 以右眼中心362號點為基準
-    const [eyeX, eyeY] = keypoints[362];
-    let eyeSumX = 0, eyeSumY = 0;
+    const [rightEyeX, rightEyeY] = keypoints[362];
+    let rightSumX = 0, rightSumY = 0;
     for (let i = 0; i < rightEyePoints.length; i++) {
       const idx = rightEyePoints[i];
       if (!keypoints[idx]) continue;
-      eyeSumX += keypoints[idx][0];
-      eyeSumY += keypoints[idx][1];
+      rightSumX += keypoints[idx][0];
+      rightSumY += keypoints[idx][1];
     }
-    const eyeCenterX = eyeSumX / rightEyePoints.length;
-    const eyeCenterY = eyeSumY / rightEyePoints.length;
-    const eyeOffsetX = eyeX - eyeCenterX;
-    const eyeOffsetY = eyeY - eyeCenterY;
+    const rightCenterX = rightSumX / rightEyePoints.length;
+    const rightCenterY = rightSumY / rightEyePoints.length;
+    const rightOffsetX = rightEyeX - rightCenterX;
+    const rightOffsetY = rightEyeY - rightCenterY;
 
     stroke(0, 255, 0);
     strokeWeight(5);
@@ -83,8 +117,7 @@ function draw() {
       const idx = rightEyePoints[i];
       if (!keypoints[idx]) continue;
       const [x, y] = keypoints[idx];
-      vertex(x + eyeOffsetX, y + eyeOffsetY);
+      vertex(x + rightOffsetX, y + rightOffsetY);
     }
     endShape();
   }
-}
